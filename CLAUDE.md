@@ -38,7 +38,9 @@ Obsidian Vault (synced via Obsidian Sync)
 
 ## Tech Decisions
 
-- **Language**: TBD (to be decided as we build)
+- **Language**: Python
+- **Package management**: [uv](https://docs.astral.sh/uv/) — all dependency management, virtual environments, and script running go through `uv`
+- **Distribution**: The project must be invocable via `uvx prismatic` — package accordingly (proper `pyproject.toml` with `[project.scripts]` entry point)
 - **File watching**: Filesystem-level watching of the Obsidian vault directory
 - **Obsidian integration**: Prismatic reads/writes Obsidian markdown files directly on disk. It may also use the Obsidian Local REST API or MCP server for richer interaction.
 - **Claude integration**: Uses the Anthropic API to spawn agents that process SOC content according to folder rules

@@ -45,6 +45,19 @@ Obsidian Vault (synced via Obsidian Sync)
 - **Obsidian integration**: Prismatic reads/writes Obsidian markdown files directly on disk. It may also use the Obsidian Local REST API or MCP server for richer interaction.
 - **Claude integration**: Uses the Anthropic API to spawn agents that process SOC content according to folder rules
 
+## Project Structure
+
+```
+prismatic/
+├── pyproject.toml          # Project config, dependencies, entry point
+├── src/prismatic/          # Application source code
+│   └── __init__.py         # Entry point (main function)
+└── CLAUDE.md
+```
+
+- Entry point: `prismatic:main` (invoked via `uv run prismatic` or `uvx prismatic`)
+- Source layout: uv default `src/` layout
+
 ## Development Guidelines
 
 - This is a greenfield project — the repo is starting from scratch

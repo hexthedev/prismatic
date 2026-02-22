@@ -1,0 +1,17 @@
+[project]
+name = "prismatic"
+version = "0.1.0"
+description = "Watches an Obsidian vault and organizes stream-of-consciousness notes using Claude agents"
+readme = "README.md"
+authors = [
+    { name = "hex", email = "jamesmccafferty@live.ca" }
+]
+requires-python = ">=3.13"
+dependencies = []
+
+[project.scripts]
+prismatic = "prismatic:main"
+
+[build-system]
+requires = ["uv_build>=0.8.3,<0.9.0"]
+build-backend = "uv_build"

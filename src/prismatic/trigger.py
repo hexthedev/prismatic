@@ -4,11 +4,19 @@ TRIGGER_KEYWORD = "@claude"
 DIR_NOTE_NAME = "_DIR.md"
 
 
-def file_contains_trigger(file_path: Path) -> bool:
+def consume_trigger(file_path: Path) -> bool:
+    """Check if file contains the trigger keyword. If so, remove it and return True."""
     try:
-        return TRIGGER_KEYWORD in file_path.read_text(encoding="utf-8")
+        content = file_path.read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError):
         return False
+
+    if TRIGGER_KEYWORD not in content:
+        return False
+
+    cleaned = content.replace(TRIGGER_KEYWORD, "")
+    file_path.write_text(cleaned, encoding="utf-8")
+    return True
 
 
 def find_dir_note(start_dir: Path, vault_root: Path) -> Path | None:
@@ -31,7 +39,7 @@ def handle_trigger(file_path: Path, vault_root: Path) -> None:
     """Check a file for the trigger keyword and log the event with DIR context."""
     path = Path(file_path)
 
-    if not file_contains_trigger(path):
+    if not consume_trigger(path):
         return
 
     print(f"\n{'='*60}", flush=True)

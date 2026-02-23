@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from pathlib import Path
 
 from prismatic.agents.obsidian import run_obsidian_agent
@@ -78,7 +79,31 @@ async def handle_trigger(file_path: Path, vault_root: Path) -> None:
 
     await run_obsidian_agent(path, dir_note, vault_root)
 
-    # For standard @claude trigger, clear the SOC file after processing
+    # For standard @claude trigger, archive then clear the SOC file
     if trigger_type == "claude":
+        archive_soc(path, vault_root)
         path.write_text("", encoding="utf-8")
         print(f"[trigger] Cleared contents of {path} (standard trigger)", flush=True)
+
+
+def archive_soc(file_path: Path, vault_root: Path) -> Path | None:
+    """Save a copy of the SOC file to .prismatic/history/ before it gets cleared."""
+    try:
+        content = file_path.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        return None
+
+    if not content.strip():
+        return None
+
+    history_dir = vault_root / ".prismatic" / "history"
+    history_dir.mkdir(parents=True, exist_ok=True)
+
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
+    stem = file_path.stem
+    archive_name = f"{timestamp}_{stem}.md"
+    archive_path = history_dir / archive_name
+
+    archive_path.write_text(content, encoding="utf-8")
+    print(f"[trigger] Archived SOC to {archive_path}", flush=True)
+    return archive_path

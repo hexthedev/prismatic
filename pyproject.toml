@@ -7,7 +7,9 @@ authors = [
     { name = "hex", email = "jamesmccafferty@live.ca" }
 ]
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "watchfiles>=1.1.1",
+]
 
 [project.scripts]
 prismatic = "prismatic:main"

@@ -51,7 +51,12 @@ Obsidian Vault (synced via Obsidian Sync)
 prismatic/
 ├── pyproject.toml          # Project config, dependencies, entry point
 ├── src/prismatic/          # Application source code
-│   └── __init__.py         # Entry point (main function)
+│   ├── __init__.py         # Entry point (main function)
+│   ├── watcher.py          # Async file watcher (watchfiles.awatch)
+│   ├── trigger.py          # Trigger detection, consumption, agent dispatch
+│   └── agents/
+│       ├── __init__.py
+│       └── obsidian.py     # Claude CLI subprocess agent for vault processing
 ├── scripts/                # Reusable test/dev scripts
 │   └── test-watcher.sh     # Integration test for file watcher + triggers
 └── CLAUDE.md

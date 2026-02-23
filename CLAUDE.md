@@ -52,6 +52,8 @@ prismatic/
 ├── pyproject.toml          # Project config, dependencies, entry point
 ├── src/prismatic/          # Application source code
 │   └── __init__.py         # Entry point (main function)
+├── scripts/                # Reusable test/dev scripts
+│   └── test-watcher.sh     # Integration test for file watcher + triggers
 └── CLAUDE.md
 ```
 
@@ -64,6 +66,12 @@ prismatic/
 - Every body of work must have an open PR. Before starting work, create a new branch and open a PR for it. If the current branch doesn't have an open PR, create one.
 - Push commits to the branch as work progresses so the user can review via the PR interface.
 - The `claude.yml` GitHub Action is kept active so the user can `@claude` in PR comments. The `claude-code-review.yml` auto-review is disabled since code is written by Claude Code locally.
+
+## Testing
+
+- For integration tests that involve running prismatic as a background process and simulating file events, **write reusable bash scripts in `scripts/`** rather than inline multi-line shell commands. This avoids repeated permission prompts and makes tests easy to re-run and modify.
+- Run integration tests via `bash scripts/test-watcher.sh` (or similar).
+- When planning work, if a feature will need repeated manual testing, include a test script as part of the deliverable.
 
 ## Development Guidelines
 

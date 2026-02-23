@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from prismatic.agents.obsidian import run_obsidian_agent
+
 TRIGGER_KEYWORD = "@claude"
 DIR_NOTE_NAME = "_DIR.md"
 
@@ -35,8 +37,8 @@ def find_dir_note(start_dir: Path, vault_root: Path) -> Path | None:
     return None
 
 
-def handle_trigger(file_path: Path, vault_root: Path) -> None:
-    """Check a file for the trigger keyword and log the event with DIR context."""
+async def handle_trigger(file_path: Path, vault_root: Path) -> None:
+    """Check a file for the trigger keyword and spawn a Claude agent if found."""
     path = Path(file_path)
 
     if not consume_trigger(path):
@@ -48,14 +50,16 @@ def handle_trigger(file_path: Path, vault_root: Path) -> None:
     dir_note = find_dir_note(path.parent, vault_root)
 
     if dir_note is None:
-        print(f"[trigger] No {DIR_NOTE_NAME} found in any parent up to {vault_root}", flush=True)
-    else:
-        relative_file = path.relative_to(dir_note.parent)
-        print(f"[trigger] Found {DIR_NOTE_NAME} at: {dir_note}", flush=True)
-        print(f"[trigger] Triggered file relative to _DIR: {relative_file}", flush=True)
-        print(f"[trigger] _DIR.md contents:", flush=True)
-        print(f"---", flush=True)
-        print(dir_note.read_text(encoding="utf-8"), flush=True)
-        print(f"---", flush=True)
+        print(
+            f"[trigger] No {DIR_NOTE_NAME} found in any parent up to {vault_root}",
+            flush=True,
+        )
+        print(f"{'='*60}\n", flush=True)
+        return
 
+    relative_file = path.relative_to(dir_note.parent)
+    print(f"[trigger] Found {DIR_NOTE_NAME} at: {dir_note}", flush=True)
+    print(f"[trigger] Triggered file relative to _DIR: {relative_file}", flush=True)
     print(f"{'='*60}\n", flush=True)
+
+    await run_obsidian_agent(path, dir_note, vault_root)

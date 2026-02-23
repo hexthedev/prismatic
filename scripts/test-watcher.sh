@@ -57,6 +57,25 @@ if [ -z "$DUMP_CONTENT" ]; then
 else
   fail "@claude trigger did NOT clear file contents: '$DUMP_CONTENT'"
 fi
+
+# Check that a history archive was created
+HISTORY_DIR="$TEST_DIR/.prismatic/history"
+if [ -d "$HISTORY_DIR" ]; then
+  ARCHIVE_COUNT=$(ls "$HISTORY_DIR"/*_dump.md 2>/dev/null | wc -l | tr -d ' ')
+  if [ "$ARCHIVE_COUNT" -ge 1 ]; then
+    ARCHIVE_FILE=$(ls "$HISTORY_DIR"/*_dump.md | head -1)
+    ARCHIVE_CONTENT=$(cat "$ARCHIVE_FILE")
+    if echo "$ARCHIVE_CONTENT" | grep -q "card game"; then
+      pass "SOC archived to .prismatic/history/ with original content"
+    else
+      fail "Archive file exists but content doesn't match original SOC"
+    fi
+  else
+    fail "No archive file found in .prismatic/history/"
+  fi
+else
+  fail ".prismatic/history/ directory was not created"
+fi
 echo "---"
 
 echo "=== Test 3: @safe.claude trigger (should preserve file minus tag) ==="

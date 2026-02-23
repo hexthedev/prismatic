@@ -58,6 +58,13 @@ prismatic/
 - Entry point: `prismatic:main` (invoked via `uv run prismatic` or `uvx prismatic`)
 - Source layout: uv default `src/` layout
 
+## Git Workflow
+
+- **Always work on a branch, never commit directly to `main`.**
+- Every body of work must have an open PR. Before starting work, create a new branch and open a PR for it. If the current branch doesn't have an open PR, create one.
+- Push commits to the branch as work progresses so the user can review via the PR interface.
+- The `claude.yml` GitHub Action is kept active so the user can `@claude` in PR comments. The `claude-code-review.yml` auto-review is disabled since code is written by Claude Code locally.
+
 ## Development Guidelines
 
 - This is a greenfield project — the repo is starting from scratch

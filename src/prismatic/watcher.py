@@ -2,12 +2,15 @@ from pathlib import Path
 
 import watchfiles
 
+from prismatic.trigger import handle_trigger
 
 CHANGE_LABELS = {
     watchfiles.Change.added: "created",
     watchfiles.Change.modified: "modified",
     watchfiles.Change.deleted: "deleted",
 }
+
+TRIGGER_CHANGE_TYPES = {watchfiles.Change.added, watchfiles.Change.modified}
 
 
 def watch_folder(path: Path) -> None:
@@ -20,3 +23,6 @@ def watch_folder(path: Path) -> None:
         for change_type, file_path in changes:
             label = CHANGE_LABELS.get(change_type, str(change_type))
             print(f"[{label}] {file_path}", flush=True)
+
+            if change_type in TRIGGER_CHANGE_TYPES:
+                handle_trigger(Path(file_path), vault_root=path)

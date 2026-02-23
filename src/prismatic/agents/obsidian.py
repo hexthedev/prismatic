@@ -44,7 +44,7 @@ async def run_obsidian_agent(
         "Glob",
         "Grep",
         "--max-turns",
-        "25",
+        "100",
         "--output-format",
         "json",
         prompt_text,

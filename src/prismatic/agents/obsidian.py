@@ -2,6 +2,8 @@ import asyncio
 import json
 from pathlib import Path
 
+CLARIFICATION_MARKER = "<!-- prismatic:needs-clarification -->"
+
 SYSTEM_PROMPT_TEMPLATE = """\
 You are operating on an Obsidian vault folder.
 
@@ -12,7 +14,37 @@ You are operating on an Obsidian vault folder.
 The triggered file is at: {relative_path}
 The working directory is: {working_dir}
 
-Process the file content below according to the folder rules above.\
+Process the file content below according to the folder rules above.
+
+## Asking Clarifying Questions
+
+If you encounter genuine ambiguity that prevents you from confidently processing the file,
+you may ask the user for clarification instead of guessing. Use this sparingly — only when
+the ambiguity is significant enough that proceeding would likely produce the wrong result.
+
+To ask clarifying questions, overwrite the SOC file ({relative_path}) with this exact format:
+
+```
+{clarification_marker}
+
+## I need a few clarifications before proceeding
+
+[1-2 sentences summarising what you understood from the content]
+
+**Questions:**
+1. [Question 1]
+2. [Question 2]
+
+---
+
+*Original content:*
+
+[paste the original file content here verbatim]
+```
+
+After writing that file, stop — do not do any other processing. Prismatic will detect the
+marker, preserve the file, and wait for the user to answer. The user will edit the file
+inline, then re-trigger with @claude when ready.\
 """
 
 
@@ -30,6 +62,7 @@ async def run_obsidian_agent(
         dir_rules=dir_rules,
         relative_path=relative_path,
         working_dir=working_dir,
+        clarification_marker=CLARIFICATION_MARKER,
     )
 
     cmd = [

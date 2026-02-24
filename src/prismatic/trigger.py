@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from pathlib import Path
 
-from prismatic.agents.obsidian import run_obsidian_agent
+from prismatic.agents.obsidian import CLARIFICATION_MARKER, run_obsidian_agent
 
 TRIGGER_CLAUDE = "@claude"
 TRIGGER_SAFE = "@safe.claude"
@@ -78,6 +78,19 @@ async def handle_trigger(file_path: Path, vault_root: Path) -> None:
     print(f"{'='*60}\n", flush=True)
 
     await run_obsidian_agent(path, dir_note, vault_root)
+
+    # Check if agent wrote clarifying questions back — if so, preserve the file
+    try:
+        post_run_content = path.read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        post_run_content = ""
+
+    if CLARIFICATION_MARKER in post_run_content:
+        print(
+            f"[trigger] Agent needs clarification — file preserved, waiting for user response",
+            flush=True,
+        )
+        return
 
     # For standard @claude trigger, archive then clear the SOC file
     if trigger_type == "claude":
